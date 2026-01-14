@@ -3,29 +3,23 @@
 import { useState, use } from 'react';
 
 export default function PodcastPortal({ params }: { params: Promise<{ recordId: string }> }) {
-  // 1. Unwrap the dynamic recordId from the Promise
   const { recordId } = use(params);
-  
   const [auth, setAuth] = useState({ email: '', password: '' });
   const [content, setContent] = useState<any>(null);
   const [error, setError] = useState('');
 
   const handleUnlock = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Ensure we are sending the unwrapped recordId
     const res = await fetch('/api/unlock', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ recordId: recordId, ...auth }),
+      body: JSON.stringify({ recordId, ...auth }),
     });
-    
     const result = await res.json();
     if (result.success) setContent(result.data);
     else setError(result.message);
   };
 
-  // State 1: Password Gate (The "Login")
   if (!content) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 p-6 font-sans">
@@ -42,13 +36,18 @@ export default function PodcastPortal({ params }: { params: Promise<{ recordId: 
     );
   }
 
-  // State 2: The Unlocked Podcast Page
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-white font-sans text-center">
       <div className="max-w-md w-full">
-        <img src={content.cover} className="w-full aspect-square rounded-2xl shadow-2xl mb-8 object-cover" alt="Album Cover" />
+        <img 
+          src={content.cover} 
+          crossOrigin="anonymous" 
+          className="w-full aspect-square rounded-2xl shadow-2xl mb-8 object-cover" 
+          alt="Album Cover" 
+        />
         <h1 className="text-3xl font-bold mb-6 text-gray-900">Our Love Podcast</h1>
-        <audio controls className="w-full mb-8">
+        {/* Added crossOrigin="anonymous" here - this is critical for S3 audio */}
+        <audio controls crossOrigin="anonymous" className="w-full mb-8">
           <source src={content.audio} type="audio/mpeg" />
         </audio>
         <div className="bg-gray-50 p-6 rounded-xl border-t-4 border-pink-400">
