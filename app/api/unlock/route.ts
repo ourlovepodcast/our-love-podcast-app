@@ -14,6 +14,7 @@ export async function POST(req: Request) {
     const record = await base(process.env.AIRTABLE_TABLE_NAME!).find(recordId);
 
     // 2. Exact match check using your field names
+    // Note: Use exact case-sensitive names from your Airtable columns
     if (record.fields.Email === email && record.fields.Password === password) {
       return NextResponse.json({
         success: true,
@@ -25,8 +26,19 @@ export async function POST(req: Request) {
       });
     }
 
-    return NextResponse.json({ success: false, message: "Invalid Email or Password" }, { status: 401 });
-  } catch (error) {
-    return NextResponse.json({ success: false, message: "Record not found" }, { status: 404 });
+    return NextResponse.json({ 
+      success: false, 
+      message: "Invalid Email or Password" 
+    }, { status: 401 });
+
+  } catch (error: any) {
+    // This logs the REAL error to your Vercel logs for you to see
+    console.error("DEBUG - Airtable Error:", error);
+
+    // This sends the REAL error message back to your screen so you can read it
+    return NextResponse.json({ 
+      success: false, 
+      message: `Airtable Error: ${error.message || "Record not found"}` 
+    }, { status: 500 });
   }
 }
