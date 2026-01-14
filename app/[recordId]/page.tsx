@@ -34,12 +34,11 @@ export default function PodcastPortal({ params }: { params: Promise<{ recordId: 
       <div className="flex items-center justify-center min-h-screen bg-[#030303] p-6 font-sans">
         <div className="w-full max-w-sm space-y-8">
           <div className="text-center">
-            {/* The "Smiley" Icon from your attachment */}
             <div className="inline-flex items-center justify-center w-12 h-12 bg-gray-800 rounded-xl mb-6">
               <span className="text-2xl">😊</span>
             </div>
             <p className="text-gray-400 text-sm mb-2">Hey you, lovely couple!</p>
-            <h2 className="text-2xl font-bold text-white">Log in to listen your episode!</h2>
+            <h2 className="text-2xl font-bold text-white leading-tight">Log in to listen your episode!</h2>
           </div>
 
           <form onSubmit={handleUnlock} className="space-y-4">
@@ -80,15 +79,15 @@ export default function PodcastPortal({ params }: { params: Promise<{ recordId: 
 
   // State 2: Dark Podcast Player Page
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-[#030303] font-sans text-center">
+    <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-[#030303] font-sans text-center text-white">
       <div className="max-w-md w-full">
         <img 
           src={content.cover} 
           crossOrigin="anonymous"
-          className="w-full aspect-square rounded-3xl shadow-2xl mb-10 object-cover" 
+          className="w-full aspect-square rounded-3xl shadow-2xl mb-10 object-cover border border-gray-800" 
           alt="Album Cover" 
         />
-        <h1 className="text-3xl font-bold mb-8 text-white">Our Love Podcast</h1>
+        <h1 className="text-3xl font-bold mb-8">Our Love Podcast</h1>
         
         <div className="mb-10">
           <audio controls crossOrigin="anonymous" className="w-full custom-audio-player">
@@ -101,7 +100,6 @@ export default function PodcastPortal({ params }: { params: Promise<{ recordId: 
         </div>
       </div>
       
-      {/* Small Inline CSS to style the default audio player slightly for dark mode */}
       <style jsx>{`
         .custom-audio-player {
           filter: invert(100%) hue-rotate(180deg) brightness(1.5);
