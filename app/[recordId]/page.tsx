@@ -1,19 +1,25 @@
 // app/[recordId]/page.tsx
 "use client";
-import { useState } from 'react';
+import { useState, use } from 'react';
 
-export default function PodcastPortal({ params }: { params: { recordId: string } }) {
+export default function PodcastPortal({ params }: { params: Promise<{ recordId: string }> }) {
+  // 1. Unwrap the dynamic recordId from the Promise
+  const { recordId } = use(params);
+  
   const [auth, setAuth] = useState({ email: '', password: '' });
   const [content, setContent] = useState<any>(null);
   const [error, setError] = useState('');
 
   const handleUnlock = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Ensure we are sending the unwrapped recordId
     const res = await fetch('/api/unlock', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ recordId: params.recordId, ...auth }),
+      body: JSON.stringify({ recordId: recordId, ...auth }),
     });
+    
     const result = await res.json();
     if (result.success) setContent(result.data);
     else setError(result.message);
