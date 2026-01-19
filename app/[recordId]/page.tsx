@@ -21,17 +21,22 @@ export default function PodcastPortal({ params }: { params: Promise<{ recordId: 
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  // Helper to convert YYYY-MM-DD to M/D/YYYY for your Airtable setup
+  /**
+   * IMPORTANT: This converts the browser's date (2006-05-18) 
+   * to your exact Airtable format (5/18/2006).
+   */
   const formatAirtableDate = (dateString: string) => {
     if (!dateString) return '';
     const [year, month, day] = dateString.split('-');
-    // parseInt removes leading zeros (e.g., "05" becomes "5")
-    return `${parseInt(month)}/${parseInt(day)}/${year}`;
+    // Number() or parseInt() removes the leading zero from 05 to make it 5
+    return `${Number(month)}/${Number(day)}/${year}`;
   };
 
   const handleUnlock = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(''); 
+    
+    const formattedPassword = formatAirtableDate(auth.password);
     
     const res = await fetch('/api/unlock', {
       method: 'POST',
@@ -39,7 +44,7 @@ export default function PodcastPortal({ params }: { params: Promise<{ recordId: 
       body: JSON.stringify({ 
         recordId, 
         email: auth.email, 
-        password: formatAirtableDate(auth.password) // Convert format here
+        password: formattedPassword 
       }),
     });
     
