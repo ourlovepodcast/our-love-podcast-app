@@ -10,7 +10,6 @@ export default function PodcastPortal({ params }: { params: Promise<{ recordId: 
   const [content, setContent] = useState<any>(null);
   const [error, setError] = useState('');
 
-  // Audio Player State
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -22,6 +21,14 @@ export default function PodcastPortal({ params }: { params: Promise<{ recordId: 
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
+  // Helper to convert YYYY-MM-DD to M/D/YYYY for your Airtable setup
+  const formatAirtableDate = (dateString: string) => {
+    if (!dateString) return '';
+    const [year, month, day] = dateString.split('-');
+    // parseInt removes leading zeros (e.g., "05" becomes "5")
+    return `${parseInt(month)}/${parseInt(day)}/${year}`;
+  };
+
   const handleUnlock = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(''); 
@@ -29,7 +36,11 @@ export default function PodcastPortal({ params }: { params: Promise<{ recordId: 
     const res = await fetch('/api/unlock', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ recordId, ...auth }),
+      body: JSON.stringify({ 
+        recordId, 
+        email: auth.email, 
+        password: formatAirtableDate(auth.password) // Convert format here
+      }),
     });
     
     const result = await res.json();
@@ -68,7 +79,6 @@ export default function PodcastPortal({ params }: { params: Promise<{ recordId: 
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wider">The Day You Met</label>
-              {/* Date selector styled for Dark Mode */}
               <input 
                 type="date" 
                 required 
@@ -82,12 +92,7 @@ export default function PodcastPortal({ params }: { params: Promise<{ recordId: 
             {error && <p className="text-red-400 text-center text-sm font-medium pt-2">{error}</p>}
           </form>
         </div>
-
-        <style jsx>{`
-          .color-scheme-dark {
-            color-scheme: dark;
-          }
-        `}</style>
+        <style jsx>{` .color-scheme-dark { color-scheme: dark; } `}</style>
       </div>
     );
   }
