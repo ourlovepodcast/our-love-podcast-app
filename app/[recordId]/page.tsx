@@ -21,22 +21,9 @@ export default function PodcastPortal({ params }: { params: Promise<{ recordId: 
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  /**
-   * IMPORTANT: This converts the browser's date (2006-05-18) 
-   * to your exact Airtable format (5/18/2006).
-   */
-  const formatAirtableDate = (dateString: string) => {
-    if (!dateString) return '';
-    const [year, month, day] = dateString.split('-');
-    // Number() or parseInt() removes the leading zero from 05 to make it 5
-    return `${Number(month)}/${Number(day)}/${year}`;
-  };
-
   const handleUnlock = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(''); 
-    
-    const formattedPassword = formatAirtableDate(auth.password);
     
     const res = await fetch('/api/unlock', {
       method: 'POST',
@@ -44,7 +31,7 @@ export default function PodcastPortal({ params }: { params: Promise<{ recordId: 
       body: JSON.stringify({ 
         recordId, 
         email: auth.email, 
-        password: formattedPassword 
+        password: auth.password 
       }),
     });
     
@@ -69,7 +56,7 @@ export default function PodcastPortal({ params }: { params: Promise<{ recordId: 
               <span className="text-2xl">😊</span>
             </div>
             <p className="text-gray-400 text-sm">Hey you, lovely couple!</p>
-            <h2 className="text-2xl font-bold leading-tight">Unlock with your special date</h2>
+            <h2 className="text-2xl font-bold leading-tight">Log in to listen your episode!</h2>
           
           <form onSubmit={handleUnlock} className="space-y-4 text-left">
             <div>
@@ -83,21 +70,21 @@ export default function PodcastPortal({ params }: { params: Promise<{ recordId: 
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wider">The Day You Met</label>
+              <label className="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wider">Password</label>
               <input 
-                type="date" 
+                type="password" 
                 required 
-                className="w-full bg-[#1A1A1A] border-none text-white p-4 rounded-xl focus:ring-1 focus:ring-[#F53DA8] outline-none transition-all color-scheme-dark" 
+                className="w-full bg-[#1A1A1A] border-none text-white p-4 rounded-xl focus:ring-1 focus:ring-[#F53DA8] outline-none transition-all" 
+                placeholder="••••••••" 
                 onChange={(e) => setAuth({...auth, password: e.target.value})} 
               />
             </div>
             <button type="submit" className="w-full bg-[#F53DA8] hover:bg-[#D4348F] text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-pink-500/20 active:scale-95">
-              Listen Together
+              Log in
             </button>
             {error && <p className="text-red-400 text-center text-sm font-medium pt-2">{error}</p>}
           </form>
         </div>
-        <style jsx>{` .color-scheme-dark { color-scheme: dark; } `}</style>
       </div>
     );
   }
