@@ -21,7 +21,6 @@ export async function POST(req: Request) {
       return NextResponse.json({
         success: true,
         data: {
-          // REMOVED "(url)" to match your actual Airtable column names
           cover: record.fields['Cover Image'],
           audio: record.fields['Podcast Link'],
           message: record.fields['Personal Message']
