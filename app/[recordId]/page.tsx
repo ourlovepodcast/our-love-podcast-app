@@ -1,6 +1,6 @@
 // app/[recordId]/page.tsx
 "use client";
-import { useState, use, useRef } from 'react';
+import { useState, use, useRef, useEffect } from 'react';
 
 export default function PodcastPortal({ params }: { params: Promise<{ recordId: string }> }) {
   const decodedParams = use(params);
@@ -14,6 +14,13 @@ export default function PodcastPortal({ params }: { params: Promise<{ recordId: 
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+
+  // Re-initialize Trustpilot widget when content is unlocked
+  useEffect(() => {
+    if (content && (window as any).Trustpilot) {
+      (window as any).Trustpilot.loadFromElement(document.querySelector('.trustpilot-widget'));
+    }
+  }, [content]);
 
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
@@ -122,6 +129,21 @@ export default function PodcastPortal({ params }: { params: Promise<{ recordId: 
                 <svg className="w-6 h-6 fill-white ml-1" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
               )}
             </button>
+          </div>
+        </div>
+
+        {/* Trustpilot Review Collector Widget */}
+        <div className="mb-10 min-h-[52px]">
+          <div 
+            className="trustpilot-widget" 
+            data-locale="en-US" 
+            data-template-id="56278e9abfbbba0bdcd568bc" 
+            data-businessunit-id="696f337dfb05178b81d8bb0c" 
+            data-style-height="52px" 
+            data-style-width="100%" 
+            data-token="1029ad08-dc3c-47cf-9775-aaa1a3797e7c"
+          >
+            <a href="https://www.trustpilot.com/review/ourlovepodcast.com" target="_blank" rel="noopener">Trustpilot</a>
           </div>
         </div>
         
